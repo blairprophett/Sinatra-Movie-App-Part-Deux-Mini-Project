@@ -41,6 +41,7 @@ GEM
     tilt (1.4.1)
     typhoeus (0.6.8)
       ethon (>= 0.7.0)
+    vcr (2.9.0)
 
 PLATFORMS
   ruby
@@ -51,3 +52,4 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   typhoeus
+  vcr
