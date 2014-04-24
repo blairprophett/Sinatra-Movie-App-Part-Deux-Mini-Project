@@ -3,6 +3,23 @@ require 'sinatra/reloader'
 require 'typhoeus'
 require 'json'
 require 'pry'
+require 'vcr'
+require 'webmock'
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'cassettes'
+  c.hook_into :webmock # or :fakeweb
+  c.default_cassette_options = { :record => :new_episodes }
+end
+
+def query_omdbapi url_path
+  results = nil
+  VCR.use_cassette('offline_playback') do
+    results= Typhoeus.get("http://www.omdbapi.com" + url_path)
+  end
+  results
+end
+
 
 # A setup step to get rspec tests running.
 configure do
@@ -16,7 +33,7 @@ end
 
 get '/results' do
 	search = params[:movie].gsub(" ", "+")
-	results= Typhoeus.get("www.omdbapi.com/?s=#{search}")
+	results= query_omdbapi("/?s=#{search}")
 	omdb_data = JSON.parse(results.body)
 
 	@movies=omdb_data["Search"]
@@ -27,7 +44,7 @@ end
 
 get '/movie/info/:imdbID' do
 	search = params[:imdbID]
-	results = Typhoeus.get("http://www.omdbapi.com/?i=#{params[:imdbID]}")
+	results = query_omdbapi("/?i=#{params[:imdbID]}")
   omdb_data = JSON.parse(results.body)
 
  @poster=omdb_data["Poster"]

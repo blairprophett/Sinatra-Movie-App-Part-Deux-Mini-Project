@@ -6,3 +6,9 @@ gem 'typhoeus'
 
 gem 'pry'
 gem 'rspec'
+
+gem 'vcr'
+gem 'webmock'
+
+
+
